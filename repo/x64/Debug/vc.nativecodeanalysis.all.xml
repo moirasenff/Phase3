@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?><DEFECTS><DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\moira\source\repos\CSE687_proj7\Phase 1\repo\packages\boost.1.79.0\lib\native\include\boost\smart_ptr\detail\</FILEPATH>
+      <FILENAME>local_counted_base.hpp</FILENAME>
+      <LINE>45</LINE>
+      <COLUMN>76</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'boost::detail::local_counted_base::count_type' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>boost::detail::local_counted_base::{ctor}</FUNCTION>
+    <DECORATED>??0local_counted_base@detail@boost@@QEAA@XZ</DECORATED>
+    <FUNCLINE>45</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\moira\source\repos\CSE687_proj7\Phase 1\repo\packages\boost.1.79.0\lib\native\include\boost\mpl\aux_\</FILEPATH>
+      <FILENAME>integral_wrapper.hpp</FILENAME>
+      <LINE>45</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'boost::log::v2s_mt_nt6::lock_access_mode' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>boost::mpl::integral_c&lt;enum boost::log::v2s_mt_nt6::lock_access_mode,0&gt;::value</FUNCTION>
+    <DECORATED>?value@?$integral_c@W4lock_access_mode@v2s_mt_nt6@log@boost@@$0A@@mpl@boost@@2W4lock_access_mode@v2s_mt_nt6@log@3@B</DECORATED>
+    <FUNCLINE>45</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT><DEFECT>
+    <SFA>
+      <FILEPATH>C:\Users\moira\source\repos\CSE687_proj7\Phase 1\repo\packages\boost.1.79.0\lib\native\include\boost\log\</FILEPATH>
+      <FILENAME>trivial.hpp</FILENAME>
+      <LINE>57</LINE>
+      <COLUMN>19</COLUMN>
+    </SFA>
+    <DEFECTCODE>26812</DEFECTCODE>
+    <DESCRIPTION>The enum type 'boost::log::v2s_mt_nt6::trivial::severity_level' is unscoped. Prefer 'enum class' over 'enum' (Enum.3).</DESCRIPTION>
+    <FUNCTION>boost::log::v2s_mt_nt6::trivial::to_string</FUNCTION>
+    <DECORATED>?to_string@trivial@v2s_mt_nt6@log@boost@@YAPEBDW4severity_level@1234@@Z</DECORATED>
+    <FUNCLINE>57</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT></DEFECTS>
