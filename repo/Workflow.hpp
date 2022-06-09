@@ -12,7 +12,7 @@
 class Workflow {
 	// params: input unsorted string vector
 	// returns: "sorted" trie of words
-	void sort(Trie*, std::vector<std::string>);
+	void sort(Trie*, Trie*, std::vector<std::string>);
 public:
 	// params: input dir, temp dir, output dir
 	// returns: pass/fail bool

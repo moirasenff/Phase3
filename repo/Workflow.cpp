@@ -14,12 +14,18 @@ bool Workflow::run(std::string inDir, std::string tempDir, std::string outDir) {
 	std::vector<std::string> inVect = FileManager::read(inDir);
 	std::vector<std::thread> threadVect;
 	keyCounter = 0;
-	static Trie* trieHead = new Trie();
-	Reducer reducer(outDir);
+	static Trie* trieHead1 = new Trie();
+	static Trie* trieHead2 = new Trie();
+	std::string outStr1;
+	std::string* strPtr1 = &outStr1;
+	std::string outStr2;
+	std::string* strPtr2 = &outStr2;
+	//Reducer reducer1(outDir);
+	//Reducer reducer2(outDir);
 	auto start = std::chrono::high_resolution_clock::now();
 	try {
 		for (int i = 0; i < inVect.size(); i++) {
-			threadVect.emplace_back([=] {	
+			threadVect.emplace_back([=] {
 				// setup objects
 				Mapper mapper;
 				// for each file in the inDirectory
@@ -28,20 +34,45 @@ bool Workflow::run(std::string inDir, std::string tempDir, std::string outDir) {
 				BOOST_LOG_TRIVIAL(info) << "Wrote temp File" << threadKey;
 				// temp dir now has intermediate files in it. now read it back in
 				std::vector<std::string> tempVect = FileManager::read(tempDir, threadKey);
-				sort(trieHead, tempVect);
-			});
+
+				sort(trieHead1, trieHead2, tempVect);
+
+
+				});
 		}
 		for (auto& thread : threadVect) {
 			thread.join();
 		}
 		// trie is populated with string values. pump them out to the vector
-		if (reducer.reduce(trieHead)) {
-			BOOST_LOG_TRIVIAL(info) << "All files completed successfully!";
-		}
-		else {
-			BOOST_LOG_TRIVIAL(info) << "Something bad happened in the trie. Exiting now.";
-			return false;
-		}
+		std::thread redT1([=] {
+			Reducer reducer(outDir);
+
+			if (reducer.reduce(trieHead1, strPtr1)) {
+				BOOST_LOG_TRIVIAL(info) << "All files in thread 1 completed successfully!";
+
+			}
+			else {
+				BOOST_LOG_TRIVIAL(info) << "Something bad happened in the trie. Exiting now.";
+				return false;
+			}});
+		std::thread redT2([=] {
+			Reducer reducer(outDir);
+			if (reducer.reduce(trieHead2, strPtr2)) {
+				BOOST_LOG_TRIVIAL(info) << "All files in thread 2 completed successfully!";
+			}
+			else {
+				BOOST_LOG_TRIVIAL(info) << "Something bad happened in the trie. Exiting now.";
+				return false;
+			}});
+		redT1.join();
+		redT2.join();
+
+		std::string outTot = outStr1 + outStr2;
+		//std::cout << "Print string:" << std::endl;
+		//std::cout << outStr1 << std::endl;
+		//FileManager::write(outStr1, outDir, -1);
+		//FileManager::write(outStr2, outDir, -1);
+		FileManager::write(outTot, outDir, -1);
 	}
 	catch (std::exception& e) {
 		BOOST_LOG_TRIVIAL(info) << "ERROR: " << e.what();
@@ -52,7 +83,7 @@ bool Workflow::run(std::string inDir, std::string tempDir, std::string outDir) {
 	return true;
 }
 
-void Workflow::sort(Trie* head, std::vector<std::string> inVect) {
+void Workflow::sort(Trie* head1, Trie* head2, std::vector<std::string> inVect) {
 	for (int i = 0; i < inVect.size(); i++) {
 		std::string line = inVect.at(i);
 		std::string::size_type start_pos = line.find("\"");
@@ -63,13 +94,27 @@ void Workflow::sort(Trie* head, std::vector<std::string> inVect) {
 			std::string word = line.substr(start_pos + 1, end_pos - 1);
 			// populate the common trie. mutex lock to be thread safe
 			mutex.lock();
-			if (head->search(word) == 0) {
-				// this is a new word
-				head->insert(word);
+			if (word[0] >= 'a' && word[0] <= 'm')
+			{
+				if (head1->search(word) == 0) {
+					// this is a new word
+					head1->insert(word);
+				}
+				else {
+					// word already existed. increment the count
+					head1->increment(word);
+				}
 			}
-			else {
-				// word already existed. increment the count
-				head->increment(word);
+			else if (word[0] >= 'n' && word[0] <= 'z')
+			{
+				if (head2->search(word) == 0) {
+					// this is a new word
+					head2->insert(word);
+				}
+				else {
+					// word already existed. increment the count
+					head2->increment(word);
+				}
 			}
 			mutex.unlock();
 		}
@@ -82,6 +127,8 @@ void Workflow::sort(Trie* head, std::vector<std::string> inVect) {
 bool Workflow::test() {
 	// tests sort, reduce, trie
 	bool retVal = false;
+	std::string outStr;
+	std::string* outPtr = &outStr;
 	_mkdir("test");
 	Workflow wf;
 	Reducer reducer("test");
@@ -90,15 +137,17 @@ bool Workflow::test() {
 	tempVect.push_back("\"other\", 1");
 	tempVect.push_back("\"a\", 1");
 	tempVect.push_back("\"test\", 1");
-	Trie* trieHead = new Trie();
-	wf.sort(trieHead, tempVect);
-	if (trieHead->search("test") == 0 ||
-		trieHead->search("other") == 0 ||
-		trieHead->search("a") == 0) {
+	Trie* trieHead1 = new Trie();
+	Trie* trieHead2 = new Trie();
+	wf.sort(trieHead1, trieHead2, tempVect);
+	if (trieHead1->search("test") == 0 ||
+		trieHead1->search("other") == 0 ||
+		trieHead1->search("a") == 0) {
 		retVal = false;
 		goto clean_up;
 	}
-	if (reducer.reduce(trieHead)) {
+
+	if (reducer.reduce(trieHead1, outPtr)) {
 		retVal = true;
 	}
 	else {
@@ -106,8 +155,8 @@ bool Workflow::test() {
 	}
 clean_up:
 	// clean up memory
-	while (!trieHead->isLeaf) {
-		trieHead->pop();
+	while (!trieHead1->isLeaf) {
+		trieHead1->pop();
 	}
 	std::filesystem::remove_all("test");
 	return retVal;

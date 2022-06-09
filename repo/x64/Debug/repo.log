@@ -1,2 +1,11 @@
 ﻿  main.cpp
-  repo.vcxproj -> C:\Users\moira\source\repos\CSE687_proj7\Phase 1\repo\x64\Debug\repo.exe
+  FileManager.cpp
+  Mapper.cpp
+  Reducer.cpp
+  Tests.cpp
+  Trie.cpp
+  Workflow.cpp
+  Generating Code...
+C:\Users\moira\source\repos\CSE687_proj7\Phase3\repo\Workflow.cpp(57): warning C4715: '<lambda_29d3309fc62b44538b5cadceecb98bd4>::operator()': not all control paths return a value
+C:\Users\moira\source\repos\CSE687_proj7\Phase3\repo\Workflow.cpp(66): warning C4715: '<lambda_3b4aabaf08ea55c1e59bf148f0f624cf>::operator()': not all control paths return a value
+  repo.vcxproj -> C:\Users\moira\source\repos\CSE687_proj7\Phase3\repo\x64\Debug\repo.exe
